@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - develop
+      - qa
+      - main
+  paths:
+    exclude:
+      - azure-pipelines.yml
+
+pool:
+  name: Azure Pipelines
+  vmImage: ubuntu-latest
+
+variables:
+  - name: BRANCH_NAME
+    value: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+  - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
+    - group: lambdaArchetypePROD
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/qa') }}:
+    - group: lambdaArchetypeQA
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+    - group: lambdaArchetypeDEV
+  - ${{ else }}:
+    - group: lambdaArchetypeDEV  
+
+resources:
+  repositories: 
+    - repository: templates
+      endpoint: ConnectionToReposInIaC
+      type: git
+      ref: refs/heads/main
+      name: Pragma7000-IaC/lambda_pipeline_template
+
+stages:
+   - template: lambda_pipeline_template.yml@templates
