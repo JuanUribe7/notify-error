@@ -1,5 +1,5 @@
-import { APIResponse } from "../core/common/types";
+// import { APIResponse } from "../core/common/types";
 
-export interface IBreedController {
-    getBreeds(): Promise<APIResponse>;
-}
+// export interface IBreedController {
+//     getBreeds(): Promise<APIResponse>;
+// }

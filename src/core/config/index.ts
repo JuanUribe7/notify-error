@@ -18,7 +18,7 @@ export default {
             database: process.env.MYSQL_DATABASE ?? DefaultValues.EMPTY_STRING,
             port: Number(process.env.MYSQL_PORT) ?? DefaultValues.ZERO_PORT,
             logLevel: process.env.LOG_LEVEL ?? DefaultValues.EMPTY_STRING,
-        },
+        },                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         PROD: {
             host: process.env.MYSQL_HOST ?? DefaultValues.EMPTY_STRING,
             user: process.env.MYSQL_USER?? DefaultValues.EMPTY_STRING,
@@ -39,5 +39,7 @@ export default {
     BREEDS: {
         API_URL: process.env.API_URL ?? DefaultValues.EMPTY_STRING,
         API_KEY: process.env.API_KEY ?? DefaultValues.EMPTY_STRING,
-    }
+    },
+    SLACK_WEBHOOK_URL: process.env.SLACK_WEBHOOK_URL!,
 };
+

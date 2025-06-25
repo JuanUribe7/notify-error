@@ -2,7 +2,7 @@ trigger:
   branches:
     include:
       - develop
-      - qa
+      - release
       - main
   paths:
     exclude:
@@ -16,21 +16,22 @@ variables:
   - name: BRANCH_NAME
     value: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
   - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
-    - group: lambdaArchetypePROD
+    - group: lambda-notify-error-chat-pdn
   - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/qa') }}:
-    - group: lambdaArchetypeQA
+    - group: lambda-notify-error-chat-qa
   - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
-    - group: lambdaArchetypeDEV
+    - group: lambda-notify-error-chat-dev
   - ${{ else }}:
-    - group: lambdaArchetypeDEV  
+    - group: lambda-notify-error-chat-dev
 
+  - group: notify
 resources:
-  repositories: 
+  repositories:     
     - repository: templates
-      endpoint: ConnectionToReposInIaC
+      name: Mapa de crecimiento/pragma-talento-pipelines
       type: git
-      ref: refs/heads/main
-      name: Pragma7000-IaC/lambda_pipeline_template
-
+    - repository: notificacion
+      name: Mapa de crecimiento/pragma-talento-pipelines
+      type: git
 stages:
-   - template: lambda_pipeline_template.yml@templates
+   - template: lambda-node-sam/lambda_pipeline_template.yml@templates

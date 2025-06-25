@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: lambda-archetype
+Description: pragma-creci-errornotifier-lambda - Lambda para la notificación centralizada de errores a sistemas de chat.
 
 Resources:
-  BreedsFunction:
+  ErrorNotifierFunction: # CAMBIADO: Nombre lógico de la función
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
@@ -11,27 +11,30 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
+      Timeout: 60 # AÑADIDO: Timeout recomendado para esta Lambda
+      MemorySize: 256 # AÑADIDO: Memoria recomendada para esta Lambda
       Tracing: Active
       Environment:
         Variables:
-          API_KEY: "d713ed90-5f08-45c4-a839-ea8e8d132a30"
-          API_URL: "https://api.thecatapi.com/v1/breeds"
-          NODE_ENVIRONMENT: "DEV"
-          MYSQL_HOST: "localhost"
-          MYSQL_USER: "userforlocal"
-          MYSQL_PASSWORDL: "passwordforlocaluser"
-          MYSQL_DATABASE: "databasename"
-          MYSQL_PORT: "portnumberformysql"
-          LOG_LEVEL: "INFO"
+          # CAMBIADO: Variables de entorno específicas para tu Lambda de Notificación de Errores
+          SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/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" # CloudOps gestionará este valor real
+          NODE_ENVIRONMENT: "LOCAL" # Esto se sobrescribirá por las variables de Azure DevOps
+
       Events:
-        Breeds:
-          Type: Api 
+        Api: # CAMBIADO: Nombre lógico del evento API
+          Type: Api
           Properties:
-            Path: /breeds
-            Method: get
+            Path: / # CAMBIADO: El path es la raíz para recibir errores
+            Method: POST # CAMBIADO: El método para enviar errores es POST
+
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:
+        External:
+        - reflect-metadata
+        - body-parser
+        - finalhandler
+        
         Minify: true
         Target: es2020
         # Sourcemap: true # Enabling source maps will create the required NODE_OPTIONS environment variables on your lambda function during sam build
@@ -39,15 +42,13 @@ Resources:
         - app.ts
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  BreedsApi:
-    Description: API Gateway endpoint URL for Prod stage for Breeds function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/breeds/"
-  BreedsFunction:
-    Description: Breeds Lambda Function ARN
-    Value: !GetAtt BreedsFunction.Arn
-  BreedsFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt BreedsFunctionRole.Arn
+  # CAMBIADO: Outputs para tu Lambda de Notificación de Errores
+  ErrorNotifierApi:
+    Description: API Gateway endpoint URL for Prod stage for Error Notifier function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  ErrorNotifierFunction:
+    Description: Error Notifier Lambda Function ARN
+    Value: !GetAtt ErrorNotifierFunction.Arn
+  ErrorNotifierFunctionIamRole:
+    Description: Implicit IAM Role created for Error Notifier function
+    Value: !GetAtt ErrorNotifierFunctionRole.Arn

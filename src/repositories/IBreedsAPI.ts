@@ -1,7 +1,7 @@
-import { BreedDTO } from "./dtos/breed-response-api";
+// import { BreedDTO } from "./dtos/breed-response-api";
 
-export interface IBreedsAPI { 
+// export interface IBreedsAPI { 
 
-   getCatBreeds(): Promise<BreedDTO[]>;
+//    getCatBreeds(): Promise<BreedDTO[]>;
 
-}
+// }
