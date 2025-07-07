@@ -11,12 +11,12 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Timeout: 60 # AÑADIDO: Timeout recomendado para esta Lambda
-      MemorySize: 256 # AÑADIDO: Memoria recomendada para esta Lambda
+      Timeout: 900 
+      MemorySize: 256 
       Tracing: Active
       Environment:
         Variables:
-          # CAMBIADO: Variables de entorno específicas para tu Lambda de Notificación de Errores
+         
           SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/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" # CloudOps gestionará este valor real
           NODE_ENVIRONMENT: "LOCAL" # Esto se sobrescribirá por las variables de Azure DevOps
 
