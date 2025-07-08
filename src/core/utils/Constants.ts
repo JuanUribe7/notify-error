@@ -55,7 +55,7 @@ const enum Message {
 }
 
 export const enum DefaultValues {
-    EMPTY_STRING = '',
+    EMPTY_STRING = 'https://hooks.slack.com/services/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',
     ZERO_PORT = 0,
     NODE_ENV_LOCAL = 'LOCAL',
     NODE_ENV_DEV = 'DEV',

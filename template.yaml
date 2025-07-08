@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: pragma-creci-errornotifier-lambda - Lambda para la notificación centralizada de errores a sistemas de chat.
+Description: pragma-lambda-notify-error - Lambda para la notificación centralizada de errores a sistemas de chat.
 
 Resources:
-  ErrorNotifierFunction: # CAMBIADO: Nombre lógico de la función
+  PragmaLambdaNotifyError: # CAMBIADO: Nombre lógico de la función
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
@@ -43,12 +43,12 @@ Resources:
 
 Outputs:
   # CAMBIADO: Outputs para tu Lambda de Notificación de Errores
-  ErrorNotifierApi:
-    Description: API Gateway endpoint URL for Prod stage for Error Notifier function
+  PragmaLambdaNotifyErrorApi:
+    Description: API Gateway endpoint URL for Prod stage for PragmaLambdaNotifyError function
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-  ErrorNotifierFunction:
-    Description: Error Notifier Lambda Function ARN
-    Value: !GetAtt ErrorNotifierFunction.Arn
-  ErrorNotifierFunctionIamRole:
-    Description: Implicit IAM Role created for Error Notifier function
-    Value: !GetAtt ErrorNotifierFunctionRole.Arn
+  PragmaLambdaNotifyError:
+    Description: PragmaLambdaNotifyError Lambda Function ARN
+    Value: !GetAtt PragmaLambdaNotifyError.Arn
+  PragmaLambdaNotifyErrorIamRole:
+    Description: Implicit IAM Role created for PragmaLambdaNotifyError function
+    Value: !GetAtt PragmaLambdaNotifyErrorRole.Arn

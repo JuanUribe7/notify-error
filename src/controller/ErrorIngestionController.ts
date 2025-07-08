@@ -1,48 +1,48 @@
-import { Response } from 'express';
+import { APIGatewayProxyResult } from 'aws-lambda';
 import { ISendNotificationBL } from '../domain/ISendNotificationBL';
-import { TypedRequestBody } from '../types/TypedRequestBody';
-import { ErrorEvent } from '../domain//models/ErrorEvent';
+import { ErrorEvent } from '../domain/models/ErrorEvent';
 import { Logger } from '@aws-lambda-powertools/logger';
-import { ResponseWriter } from '../core/common/ResponseWriter'; 
-import { HttpStatus } from '../core/utils/Constants'; 
-import { IErrorIngestionController } from './IErrorIngestionController'; 
-import { APIResponse } from "../core/common/types"; 
-
+import { HttpStatus } from '../core/utils/Constants';
+import { IErrorIngestionController } from './IErrorIngestionController';
+import { APIResponse } from '../core/common/types';
+import { Response } from 'express';
+import { TypedRequestBody } from '../types/TypedRequestBody';
 
 const logger = new Logger({
-    serviceName: "ErrorNotifier-Controller"
+    serviceName: 'ErrorNotifier-Controller',
 });
 
 export class ErrorIngestionController implements IErrorIngestionController {
     constructor(private readonly sendNotificationUseCase: ISendNotificationBL) {}
+    handleErrorIngestion(req: TypedRequestBody<ErrorEvent | any>, res: Response): Promise<APIResponse> {
+        throw new Error('Method not implemented.');
+    }
 
-   
-    async handleErrorIngestion(req: TypedRequestBody<any>, res: Response): Promise<APIResponse> {
+    public async handleRequest(body: ErrorEvent | any): Promise<APIGatewayProxyResult> {
         try {
-            const rawErrorData = req.body;
-            logger.info('Received incoming error request for processing.', { payload: rawErrorData });
+            logger.info('Received incoming error request for processing.', { payload: body });
 
-            await this.sendNotificationUseCase.execute(rawErrorData);
+            await this.sendNotificationUseCase.execute(body);
 
-            return ResponseWriter.objectResponse(HttpStatus.OK, { message: 'Error processed and notification attempt initiated successfully.' });
+            return {
+                statusCode: HttpStatus.OK,
+                body: JSON.stringify({
+                    message: 'Error processed and notification attempt initiated successfully.',
+                }),
+            };
         } catch (error: any) {
             logger.error(`Error in ErrorIngestionController during request handling: ${error.message}`, {
                 originalError: error,
-                requestBody: req.body
+                requestBody: body,
             });
-          
-            return ResponseWriter.objectResponse(HttpStatus.INTERNAL_SERVER_ERROR, { message: 'Failed to process error', details: error.message });
-        }
-    }
 
-   
-    public async handleExpressRequest(req: TypedRequestBody<ErrorEvent | any>, res: Response): Promise<void> {
-        try {
-            const apiResponse = await this.handleErrorIngestion(req, res);
-            res.status(apiResponse.statusCode).send(apiResponse.body);
-        } catch (error) {
-
-            throw error;
+            return {
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                body: JSON.stringify({
+                    message: 'Failed to process error',
+                    details: error.message,
+                }),
+            };
         }
     }
 }

@@ -18,25 +18,28 @@ export class SlackNotificationAPI implements IChatNotificationAPI {
         }
     }
 
-    async sendNotification(error: ErrorEvent): Promise<void> {
-        if (!this.slackWebhookUrl) {
-            logger.warn('Cannot send Slack notification: Webhook URL is not configured.');
-            return;
-        }
-
-        const slackMessage = this.formatSlackMessage(error);
-
-        try {
-            logger.info(`Attempting to send message to Slack for service: ${error.serviceName}`);
-            await axios.post(this.slackWebhookUrl, { text: slackMessage });
-            logger.info('Error notification successfully sent to Slack.');
-        } catch (axiosError: any) {
-            logger.error(`Failed to send notification to Slack for service ${error.serviceName}: ${axiosError.message}`, {
-                errorDetails: axiosError.response?.data || axiosError.message
-            });
-            throw new Error(`Failed to send Slack notification: ${axiosError.message}`);
-        }
+async sendNotification(error: ErrorEvent): Promise<void> {
+    if (!this.slackWebhookUrl) {
+        logger.warn('Cannot send Slack notification: Webhook URL is not configured.');
+        return;
     }
+
+    const slackMessage = this.formatSlackMessage(error);
+
+    try {
+        logger.info(`Attempting to send message to Slack for service: ${error.serviceName}`);
+        const headers = { 'Content-Type': 'application/json' };
+        const payload = { text: slackMessage };
+
+        await axios.post(this.slackWebhookUrl, payload, { headers });
+        logger.info('Error notification successfully sent to Slack.');
+    } catch (axiosError: any) {
+        logger.error(`Failed to send notification to Slack for service ${error.serviceName}: ${axiosError.message}`, {
+            errorDetails: axiosError.response?.data || axiosError.message,
+        });
+        throw new Error(`Failed to send Slack notification: ${axiosError.message}`);
+    }
+}
 
     private formatSlackMessage(error: ErrorEvent): string {
         let message = `*🚨 ERROR en <span class="math-inline">\{error\.serviceName\} \(</span>{error.severity.toUpperCase()})*\n`;

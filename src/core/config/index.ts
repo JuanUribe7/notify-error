@@ -5,14 +5,14 @@ import { DefaultValues } from '../utils/Constants';
 
 
 const SLACK_WEBHOOK_URL: Record<string, string> = {
-    dev: 'https://hooks.slack.com/services/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',
-    qa: 'https://hooks.slack.com/services/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',
-    prod: 'https://hooks.slack.com/services/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'
+    DEV: 'https://hooks.slack.com/services/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',
+    QA: 'https://hooks.slack.com/services/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',
+    PROD: 'https://hooks.slack.com/services/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'
 };
 export default {
 
-    NODE_ENVIRONMENT: process.env.NODE_ENVIRONMENT ?? DefaultValues.NODE_ENV_LOCAL,
-    SLACK_WEBHOOK_URL: SLACK_WEBHOOK_URL[process.env.NODE_ENVIRONMENT?.toLowerCase() ?? 'dev'] ?? DefaultValues.EMPTY_STRING,
+    ENVIRONMENT: process.env.ENVIRONMENT ?? DefaultValues.NODE_ENV_DEV,
+    SLACK_WEBHOOK_URL: SLACK_WEBHOOK_URL[process.env.ENVIRONMENT?.toUpperCase() ?? 'DEV'] ?? DefaultValues.EMPTY_STRING,
 
 };
     
